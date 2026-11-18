@@ -50,9 +50,9 @@ pip install -e .
 ## Running the pipeline
 
 ```bash
-python -m travel_recsys.data.cities
-python -m travel_recsys.data.wikivoyage
-python -m travel_recsys.data.clean_text
+python -m travel_recsys.data.01_cities
+python -m travel_recsys.data.02_wikivoyage
+python -m travel_recsys.data.03_clean_text
 python -m travel_recsys.features.embeddings
 ```
 
