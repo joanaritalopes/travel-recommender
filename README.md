@@ -16,15 +16,13 @@ A second phase will add collaborative filtering on Booking.com's multi-destinati
 ## Design decisions
 
 ### Candidate selection: population is a starting point, not a filter
-The largest cities by population are not necessarily the most visited destinations. GeoNames provides a broad candidate list, and the existence and length of a Wikivoyage article then act as a signal of tourist interest. Districts of larger cities (GeoNames feature code `PPLX`) are excluded so they don't compete with the city they belong to.
+The largest cities by population are not necessarily the most visited destinations. GeoNames provides a broad candidate list, and the quality of each city's Wikivoyage article then decides whether it has enough content to describe. Districts of larger cities (GeoNames feature code `PPLX`) are excluded so they don't compete with the city they belong to.
 
 ### Collecting data through an API, not scraping
 Article text comes from the MediaWiki API as structured JSON. Page metadata is requested in batches of 50 titles, while full text is fetched per page. Requests identify the project with a `User-Agent` header and pause between calls, following Wikimedia's API guidelines.
 
 ### Section selection as feature selection on text
-Wikivoyage city articles mix two kinds of content: sections describing a city's character (Understand, See, Do, Buy, Eat, Drink) and sections about logistics (Get in, Get around, Sleep, Stay safe, Connect). Every city has an airport, hotels and safety advice, so logistics text makes cities look more similar to each other in embedding space, which is the opposite of what a recommender needs. Only the character sections and the introduction are kept. Sections are stored separately, so later steps can use them individually, for example tagging activities from See and Do.
-
-Price tiers are a good example of why this is a judgement on information, not on topic: Wikivoyage splits every Eat and Sleep section into Budget, Mid-range and Splurge, so those headings appear in nearly every article and say nothing about whether a city is affordable. Budget is instead treated as a zero-shot label, verified against cities with well-known price levels.
+Wikivoyage city articles mix two kinds of content: sections describing a city's character (Understand, See, Do, Buy, Eat, Drink) and sections about logistics (Get in, Get around, Sleep, Stay safe, Connect). Every city has an airport, hotels and safety advice, so logistics text makes cities look more similar to each other in embedding space, which is the opposite of what a recommender needs. Only the character sections and the introduction are kept. Sections are stored separately, so later steps can use them individually, for example tagging activities from See and Do. Articles with fewer than 300 words after cleaning are dropped, since that is too little text to describe a city.
 
 ## Project structure
 
@@ -53,14 +51,12 @@ pip install -e .
 python -m travel_recsys.data.01_cities
 python -m travel_recsys.data.02_wikivoyage
 python -m travel_recsys.data.03_clean_text
-python -m travel_recsys.features.embeddings
 ```
 
 ## Results
 
-- Candidate cities from GeoNames: <N> across <N> countries
-- Matched to a Wikivoyage article: 2020
-- Cities with a full guide after cleaning: 1656
+- Wikivoyage pages matched: 2020
+- Cities with usable text after cleaning: 1656 (364 dropped for having under 300 words)
 - Median article length after cleaning: 1525 words
 
 ## Data sources and licenses
