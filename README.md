@@ -59,9 +59,9 @@ python -m travel_recsys.features.embeddings
 ## Results
 
 - Candidate cities from GeoNames: <N> across <N> countries
-- Matched to a Wikivoyage article: 2,020
-- Cities with a full guide after cleaning: 583
-- Median article length after cleaning: 4,154 words
+- Matched to a Wikivoyage article: 2020
+- Cities with a full guide after cleaning: 1656
+- Median article length after cleaning: 1525 words
 
 ## Data sources and licenses
 
