@@ -24,6 +24,9 @@ Article text comes from the MediaWiki API as structured JSON. Page metadata is r
 ### Section selection as feature selection on text
 Wikivoyage city articles mix two kinds of content: sections describing a city's character (Understand, See, Do, Buy, Eat, Drink) and sections about logistics (Get in, Get around, Sleep, Stay safe, Connect). Every city has an airport, hotels and safety advice, so logistics text makes cities look more similar to each other in embedding space, which is the opposite of what a recommender needs. Only the character sections and the introduction are kept. Sections are stored separately, so later steps can use them individually, for example tagging activities from See and Do. Articles with fewer than 300 words after cleaning are dropped, since that is too little text to describe a city.
 
+### Section-balanced embeddings for long texts
+City profiles are embedded with `all-MiniLM-L6-v2`, a compact sentence-transformer that runs on a laptop. The model reads at most 256 tokens, while the median city text is about 1,500 words, so embedding the full text directly would only capture its opening. Each section is split into 150-word chunks, every chunk is embedded, chunks are averaged into section vectors, and section vectors are averaged into one city vector. Averaging per section first gives every section an equal say: otherwise long sections, such as Eat pages listing dozens of restaurants, would dominate a city's profile. City vectors are normalized to unit length, so cosine similarity reduces to a dot product.
+
 ## Project structure
 
 ```
@@ -49,15 +52,17 @@ pip install -e .
 
 ```bash
 python -m travel_recsys.data.01_cities
-python -m travel_recsys.data.02_wikivoyage
+python -m travel_recsys.data.01_wikivoyage
 python -m travel_recsys.data.03_clean_text
+python -m travel_recsys.features.04_embeddings
 ```
 
 ## Results
 
-- Wikivoyage pages matched: 2020
-- Cities with usable text after cleaning: 1656 (364 dropped for having under 300 words)
-- Median article length after cleaning: 1525 words
+- Wikivoyage pages matched: 2,020
+- Cities with usable text after cleaning: 1,656 (364 dropped for having under 300 words)
+- Median article length after cleaning: 1,525 words
+- City embeddings: 1,656 vectors of 384 dimensions
 
 ## Data sources and licenses
 
@@ -70,8 +75,8 @@ python -m travel_recsys.data.03_clean_text
 - [x] Candidate city selection
 - [x] Wikivoyage data collection
 - [x] Text cleaning
-- [ ] Destination embeddings
-- [ ] Activity tags (including budget labels)
+- [x] Destination embeddings
+- [ ] Activity tags  (including budget labels)
 - [ ] Content-based recommender
 - [ ] Evaluation
 - [ ] Collaborative filtering on Booking.com trips
