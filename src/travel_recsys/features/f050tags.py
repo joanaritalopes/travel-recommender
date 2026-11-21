@@ -3,7 +3,7 @@ import pandas as pd
 from transformers import pipeline
 
 from travel_recsys.config import ARTIFACTS, DATA_PROCESSED
-from travel_recsys.features.embeddings04 import chunk, pick_device
+from travel_recsys.features.f04embeddings import chunk, pick_device
 
 # small model: "MoritzLaurer/deberta-v3-base-zeroshot-v2.0" -> trained specifically for zero-shot classification on many NLI datasets; smaller, faster
 # large model: "MoritzLaurer/deberta-v3-large-zeroshot-v2.0" -> more accurate, but ~2 to 3 times slower

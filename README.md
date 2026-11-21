@@ -107,12 +107,12 @@ unzip data/raw/cities15000.zip -d data/raw
 Run the steps in order from the repository root. Each step reads the previous step's output, so after changing one step, rerun it and every step after it.
 
 ```bash
-python -m travel_recsys.data.01cities
-python -m travel_recsys.data.02wikivoyage
-python -m travel_recsys.data.03clean_text
-python -m travel_recsys.features.embeddings04
-python -m travel_recsys.features.tags05a
-python -m travel_recsys.features.tags_embedding05b
+python -m travel_recsys.data.d01cities
+python -m travel_recsys.data.d02wikivoyage
+python -m travel_recsys.data.d03clean_text
+python -m travel_recsys.features.f04embeddings
+python -m travel_recsys.features.f050tags
+python -m travel_recsys.features.f051tags_embedding
 ```
 
 Steps 5a and 5b are independent of each other. The zero-shot tagging step is the slowest, taking up to an hour or more depending on the model.
