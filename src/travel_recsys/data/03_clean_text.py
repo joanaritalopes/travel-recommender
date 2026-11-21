@@ -6,6 +6,7 @@ import pandas as pd
 from travel_recsys.config import DATA_PROCESSED, DATA_RAW
 
 KEEP_SECTIONS = ["Intro", "Understand", "See", "Do", "Buy", "Eat", "Drink"]
+BUDGET_ONLY_SECTIONS = ["Sleep"]
 HEADING = re.compile(r"^(=+)\s*(.+?)\s*=+\s*$")
 MIN_WORDS = 300
 
@@ -37,6 +38,8 @@ def build_record(page) -> dict:
     record = {"geonameid": page["geonameid"], "title": page["title"]}
     for name in KEEP_SECTIONS:
         record[name.lower()] = normalize(sections.get(name, ""))
+    for name in BUDGET_ONLY_SECTIONS:
+        record[name.lower()] = normalize(sections.get(name, ""))
     record["text"] = " ".join(record[name.lower()] for name in KEEP_SECTIONS if record[name.lower()])
     record["n_words"] = len(record["text"].split())
     return record
@@ -52,7 +55,10 @@ def main():
 
     print(f"{len(df)} cities kept, {short.sum()} dropped for having under {MIN_WORDS} words")
     print(f"median length: {df['n_words'].median():.0f} words")
-    print("empty sections:", {name: int((df[name.lower()] == "").sum()) for name in KEEP_SECTIONS})
+    print("empty sections:", {
+        name: int((df[name.lower()] == "").sum())
+        for name in KEEP_SECTIONS + BUDGET_ONLY_SECTIONS
+    })
 
     out_path = DATA_PROCESSED / "city_texts.jsonl"
     df.to_json(out_path, orient="records", lines=True, force_ascii=False)

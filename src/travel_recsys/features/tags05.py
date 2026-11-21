@@ -67,21 +67,40 @@ def top_tags(row) -> str:
     return ", ".join(strong.index)
 
 
+def high_pairs(corr, threshold) -> list[tuple[str, str, float]]:
+    '''To check correlations for pairs.'''
+    pairs = []
+    labels = list(corr.columns)
+    for i, first in enumerate(labels):
+        for second in labels[i + 1:]:
+            value = float(corr.loc[first, second])
+            if value >= threshold:
+                pairs.append((first, second, round(value, 2)))
+    return sorted(pairs, key=lambda pair: pair[2], reverse=True)
+
+
 def main():
     df = pd.read_json(DATA_PROCESSED / "city_texts.jsonl", lines=True)
     classifier = pipeline("zero-shot-classification", model=MODEL_NAME, device=pick_device())
 
-    activity = city_scores(
+    activity_scores = city_scores(
         classifier, df, ACTIVITY_SECTIONS, ACTIVITY_LABELS, ACTIVITY_TEMPLATE,
         multi_label=True, agg="max",
     )
-    budget = city_scores(
+    budget_scores = city_scores(
         classifier, df, BUDGET_SECTIONS, BUDGET_LABELS, BUDGET_TEMPLATE,
         multi_label=False, agg="mean",
     )
 
-    result = pd.concat([df[["geonameid", "title"]], activity, budget], axis=1)
-    result["tags"] = activity.apply(top_tags, axis=1)
+    corr = activity_scores.corr(method="spearman")
+    
+    print(corr.round(2).to_string())
+    print(f"\npairs with correlation >= {HIGH_CORRELATION}:")
+    for first, second, value in high_pairs(corr, HIGH_CORRELATION):
+        print(f"  {first} / {second}: {value}")
+
+    result = pd.concat([df[["geonameid", "title"]], activity_scores, budget_scores], axis=1)
+    result["tags"] = activity_scores.apply(top_tags, axis=1)
     result.to_csv(output_path(), index=False)
     print(f"tagged {len(result)} cities, saved to {output_path()}")
 
