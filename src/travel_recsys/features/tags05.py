@@ -5,7 +5,9 @@ from transformers import pipeline
 from travel_recsys.config import ARTIFACTS, DATA_PROCESSED
 from travel_recsys.features.embeddings04 import chunk, pick_device
 
-MODEL_NAME = "MoritzLaurer/deberta-v3-base-zeroshot-v2.0"
+# small model: "MoritzLaurer/deberta-v3-base-zeroshot-v2.0" -> trained specifically for zero-shot classification on many NLI datasets; smaller, faster
+# large model: "MoritzLaurer/deberta-v3-large-zeroshot-v2.0" -> more accurate, but ~2 to 3 times slower
+MODEL_NAME = "MoritzLaurer/deberta-v3-large-zeroshot-v2.0"
 
 ACTIVITY_LABELS = [
     "beaches", "nightlife", "museums", "history", "architecture", "art",
@@ -15,19 +17,23 @@ ACTIVITY_SECTIONS = ["intro", "understand", "see", "do", "eat", "drink", "buy"]
 ACTIVITY_TEMPLATE = "This place is good for {}."
 
 BUDGET_LABELS = ["affordable", "expensive"]
-BUDGET_SECTIONS = ["understand", "eat"]
+BUDGET_SECTIONS = ["understand", "eat", "drink"]
 BUDGET_TEMPLATE = "Visiting this place is {}."
 
+# there is 7 sections: so 7*2=21; max=3 would help long articles but at much higher cost
 MAX_CHUNKS_PER_SECTION = 2
-TAG_THRESHOLD = 0.8
+TAG_THRESHOLD = 0.75
 MAX_TAGS = 5
+
+def output_path():
+    return ARTIFACTS / f"city_tags_{MODEL_NAME.split('/')[-1]}.csv"
 
 
 def sample_chunks(record, sections) -> list[str]:
     pieces = []
     for section in sections:
         pieces.extend(chunk(record[section])[:MAX_CHUNKS_PER_SECTION])
-    print(pieces)
+
     return pieces
 
 
@@ -51,12 +57,13 @@ def city_scores(classifier, df, sections, labels, template, multi_label, agg) ->
 
     table = pd.DataFrame(scores, columns=labels)
     table["city"] = cities
-    print(table)
+
     return table.groupby("city").agg(agg).reindex(range(len(df)))
 
 
 def top_tags(row) -> str:
     strong = row[row >= TAG_THRESHOLD].sort_values(ascending=False).head(MAX_TAGS)
+
     return ", ".join(strong.index)
 
 
@@ -75,8 +82,8 @@ def main():
 
     result = pd.concat([df[["geonameid", "title"]], activity, budget], axis=1)
     result["tags"] = activity.apply(top_tags, axis=1)
-    result.to_csv(ARTIFACTS / "city_tags.csv", index=False)
-    print(f"tagged {len(result)} cities")
+    result.to_csv(output_path(), index=False)
+    print(f"tagged {len(result)} cities, saved to {output_path()}")
 
 
 if __name__ == "__main__":
