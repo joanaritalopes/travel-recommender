@@ -17,13 +17,14 @@ ACTIVITY_SECTIONS = ["intro", "understand", "see", "do", "eat", "drink", "buy"]
 ACTIVITY_TEMPLATE = "This place is good for {}."
 
 BUDGET_LABELS = ["affordable", "expensive"]
-BUDGET_SECTIONS = ["understand", "eat", "drink"]
+BUDGET_SECTIONS = ["understand", "eat", "drink", "sleep"]
 BUDGET_TEMPLATE = "Visiting this place is {}."
 
 # there is 7 sections: so 7*2=21; max=3 would help long articles but at much higher cost
 MAX_CHUNKS_PER_SECTION = 2
 TAG_THRESHOLD = 0.75
 MAX_TAGS = 5
+HIGH_CORRELATION = 0.8
 
 def output_path():
     return ARTIFACTS / f"city_tags_{MODEL_NAME.split('/')[-1]}.csv"

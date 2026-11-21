@@ -7,7 +7,7 @@ from travel_recsys.config import ARTIFACTS, DATA_PROCESSED
 
 SECTIONS = ["intro", "understand", "see", "do", "buy", "eat", "drink"]
 CHUNK_WORDS = 150
-
+MODEL_NAME = "sentence-transformers/all-MiniLM-L6-v2"
 
 def pick_device() -> str:
     return "mps" if torch.backends.mps.is_available() else "cpu"
