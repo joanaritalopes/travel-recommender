@@ -33,6 +33,7 @@ Solid boxes are developed; dashed boxes are planned.
 | 4 | `features/embeddings.py` | `city_texts.jsonl` | `artifacts/city_embeddings.npy`, `artifacts/city_index.csv` | Developed |
 | 5a | `features/tags.py` | `city_texts.jsonl` | `artifacts/city_tags_<model>.csv` | Developed, full run pending |
 | 5b | `features/tags_embedding.py` | `city_embeddings.npy`, `city_index.csv` | `artifacts/city_tags_embedding.csv` | Developed |
+| 5c | `evaluation/label_correlation.py` | `city_tags_<model>.csv` | `reports/label_correlations_<model>.csv` | Developed |
 | 6 | Tagging comparison | outputs of 5a and 5b | | Planned |
 | 7 | Content-based recommender | embeddings and tags | | Planned |
 | 8 | Evaluation | recommender output | | Planned |
