@@ -32,11 +32,10 @@ flowchart TD
 | 5a | `features/f050tags.py` | `city_texts.jsonl` | `artifacts/city_tags_<model>.csv` |
 | 5b | `features/f051tags_embedding.py` | `city_embeddings.npy`, `city_index.csv` | `artifacts/city_tags_embedding.csv` |
 | 5c | `evaluation/label_correlation.py` | `city_tags_<model>.csv` | `reports/label_correlations_<model>.csv` |
-
-| 6 | Tagging comparison | outputs of 5a and 5b | |
-| 7 | Content-based recommender | embeddings and tags | |
-| 8 | Evaluation | recommender output | |
-| 9 | Collaborative filtering | Booking.com trips | |
+| 6 | Tagging comparison | outputs of 5a and 5b |
+| 7 | Content-based recommender | embeddings and tags |
+| 8 | Evaluation | recommender output |
+| 9 | Collaborative filtering | Booking.com trips |
 
 ### Checks
 
