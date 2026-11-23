@@ -34,9 +34,9 @@ flowchart TD
 | 5c | `evaluation/label_correlation.py` | `city_tags_<model>.csv` | `reports/label_correlations_<model>.csv` |
 
 | 6 | Tagging comparison | outputs of 5a and 5b | |
-| 7 | Content-based recommender | embeddings and tags |
-| 8 | Evaluation | recommender output |
-| 9 | Collaborative filtering | Booking.com trips |
+| 7 | Content-based recommender | embeddings and tags | |
+| 8 | Evaluation | recommender output | |
+| 9 | Collaborative filtering | Booking.com trips | |
 
 ### Checks
 
