@@ -23,21 +23,20 @@ flowchart TD
     class G,H,I,J,K planned
 ```
 
-Solid boxes are developed; dashed boxes are planned.
+| Step | Script | Input | Output |
+|---|---|---|---|
+| 1 | `data/d01cities.py` | GeoNames `cities15000.txt` | `data/interim/selected_cities.csv` |
+| 2 | `data/d02wikivoyage.py` | `selected_cities.csv` | `data/interim/matched_cities.csv`, `data/raw/wikivoyage_pages.jsonl` |
+| 3 | `data/d03clean_text.py` | `wikivoyage_pages.jsonl` | `data/processed/city_texts.jsonl` |
+| 4 | `features/f04embeddings.py` | `city_texts.jsonl` | `artifacts/city_embeddings.npy`, `artifacts/city_index.csv` |
+| 5a | `features/f050tags.py` | `city_texts.jsonl` | `artifacts/city_tags_<model>.csv` |
+| 5b | `features/f051tags_embedding.py` | `city_embeddings.npy`, `city_index.csv` | `artifacts/city_tags_embedding.csv` |
+| 5c | `evaluation/label_correlation.py` | `city_tags_<model>.csv` | `reports/label_correlations_<model>.csv` |
 
-| Step | Script | Input | Output | Status |
-|---|---|---|---|---|
-| 1 | `data/cities.py` | GeoNames `cities15000.txt` | `data/interim/selected_cities.csv` | Developed |
-| 2 | `data/wikivoyage.py` | `selected_cities.csv` | `data/interim/matched_cities.csv`, `data/raw/wikivoyage_pages.jsonl` | Developed |
-| 3 | `data/clean_text.py` | `wikivoyage_pages.jsonl` | `data/processed/city_texts.jsonl` | Developed |
-| 4 | `features/embeddings.py` | `city_texts.jsonl` | `artifacts/city_embeddings.npy`, `artifacts/city_index.csv` | Developed |
-| 5a | `features/tags.py` | `city_texts.jsonl` | `artifacts/city_tags_<model>.csv` | Developed, full run pending |
-| 5b | `features/tags_embedding.py` | `city_embeddings.npy`, `city_index.csv` | `artifacts/city_tags_embedding.csv` | Developed |
-| 5c | `evaluation/label_correlation.py` | `city_tags_<model>.csv` | `reports/label_correlations_<model>.csv` | Developed |
-| 6 | Tagging comparison | outputs of 5a and 5b | | Planned |
-| 7 | Content-based recommender | embeddings and tags | | Planned |
-| 8 | Evaluation | recommender output | | Planned |
-| 9 | Collaborative filtering | Booking.com trips | | Planned |
+| 6 | Tagging comparison | outputs of 5a and 5b | |
+| 7 | Content-based recommender | embeddings and tags |
+| 8 | Evaluation | recommender output |
+| 9 | Collaborative filtering | Booking.com trips |
 
 ### Checks
 
