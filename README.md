@@ -56,7 +56,7 @@ The largest cities by population are not necessarily the most visited destinatio
 ### Collecting data through an API, not scraping
 Article text comes from the MediaWiki API as structured JSON. Page metadata is requested in batches of 50 titles, while full text is fetched per page. Requests identify the project with a `User-Agent` header and pause between calls, following Wikimedia's API guidelines.
 
-Matching by name alone produced wrong matches, such as a Bulgarian town matched to the Wikivoyage page for the US state of Montana, and city names redirecting to regional articles. Each match is therefore verified by comparing the Wikivoyage page's coordinates with the GeoNames city's coordinates using the haversine distance, and matches more than 50 km apart are rejected. When several cities share a page name, the closest one is kept.
+Matching by name alone produced wrong matches, such as a Bulgarian town matched to the Wikivoyage page for the US state of Montana, and city names redirecting to regional articles. Each match is therefore verified by comparing the Wikivoyage page's coordinates with the GeoNames city's coordinates using the haversine distance. Of 2,057 name matches, 7 pages had no coordinates and 84 were more than 55 km from their city; both were rejected. When several cities share a page name, the closest one is kept, leaving 1,950 verified cities across 188 countries.
 
 ### Section selection as feature selection on text
 Wikivoyage city articles mix two kinds of content: sections describing a city's character (Understand, See, Do, Buy, Eat, Drink) and sections about logistics (Get in, Get around, Sleep, Stay safe, Connect). Every city has an airport, hotels and safety advice, so logistics text makes cities look more similar to each other in embedding space, which is the opposite of what a recommender needs. Only the character sections and the introduction are kept. Sections are stored separately, so later steps can use them individually, for example tagging activities from See and Do. Articles with fewer than 300 words after cleaning are dropped, since that is too little text to describe a city.
@@ -111,7 +111,7 @@ python -m travel_recsys.data.d01cities
 python -m travel_recsys.data.d02wikivoyage
 python -m travel_recsys.data.d03clean_text
 python -m travel_recsys.features.f04embeddings
-python -m travel_recsys.features.f050tags
+caffeinate -i python -m travel_recsys.features.f050tags
 python -m travel_recsys.features.f051tags_embedding
 ```
 
@@ -119,10 +119,11 @@ Steps 5a and 5b are independent of each other. The zero-shot tagging step is the
 
 ## Results
 
-- Name matches verified by coordinates: <N> of <N>
-- Cities with usable text after cleaning: <N>
-- Median article length after cleaning: <N> words
-- City embeddings: <N> vectors of 384 dimensions
+- Candidate cities from GeoNames: 3680 across 195 countries
+- Wikivoyage name matches: 2057, of which 1950 verified by coordinates (188 countries)
+- Cities with usable text after cleaning: 1608 (342 dropped for having under 300 words)
+- Median article length after cleaning: 1560 words
+- City embeddings: 1608 vectors of 384 dimensions, built from about 32000 text chunks
 
 ## Planned experiments
 
